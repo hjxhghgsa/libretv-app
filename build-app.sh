@@ -31,8 +31,9 @@ mkdir -p "$STANDALONE/.next/static"
 cp -rf "$LIBRETV_DIR/.next/static/." "$STANDALONE/.next/static/"
 mkdir -p "$STANDALONE/public"
 cp -rf "$LIBRETV_DIR/public/." "$STANDALONE/public/"
-# .env.local 里的 PASSWORD 等运行时配置也要带过去
-cp "$LIBRETV_DIR/.env.local" "$STANDALONE/.env.local" 2>/dev/null || true
+# ★ 复制脱敏的默认配置（.env.example：公开示例源站 + 占位密码 change-me），
+#   绝不打包真实 .env.local（含私密 PASSWORD）。发布版用默认配置即可，用户首次运行可自行改密码。
+cp "$APP_DIR/.env.example" "$STANDALONE/.env.local" 2>/dev/null || true
 echo "    static: $(du -sh "$STANDALONE/.next/static" | cut -f1)"
 echo "    public: $(du -sh "$STANDALONE/public" | cut -f1)"
 
