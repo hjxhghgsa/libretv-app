@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# 7za 包装器：忽略 darwin 符号链接的解压错误
+#
+# electron-builder 解压 winCodeSign 时用 `7za x -snld`，其中 2 个 darwin 的
+# 符号链接在 Windows 上无法创建 → 7za 返回退出码 2 → electron-builder 判定
+# 「解压失败」并中止整个打包。
+#
+# 但实际内容（rcedit.exe / signtool.exe 等 Windows 需要的文件）已经完整解压了。
+# 所以这里执行完原始命令后，若目标目录里已有 rcedit-x64.exe，就返回 0。
+#
+# 通过 ELECTRON_BUILDER_7ZA 之类的方式不易注入，改用 PATH 前置法：
+# 构建脚本里把本目录放到 PATH 最前面，7za 就会被这个同名脚本顶替。
+
+REAL_7ZA="$1"; shift
+"$REAL_7ZA" "$@"
+rc=$?
+
+# 从参数里找出输出目录（-o 后面那个）
+out=""
+prev=""
+for a in "$@"; do
+  if [ "$prev" = "-o" ]; then out="$a"; fi
+  case "$a" in
+    -o*) out="${a#-o}" ;;
+  esac
+  prev="$a"
+done
+
+if [ -n "$out" ] && [ -f "$out/rcedit-x64.exe" ]; then
+  # 关键文件已就位 → 视作成功
+  exit 0
+fi
+
+exit $rc

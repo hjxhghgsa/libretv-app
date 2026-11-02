@@ -1,0 +1,78 @@
+{
+  "name": "libretv-app",
+  "version": "1.0.0",
+  "description": "LibreTV 影视工作台 - 桌面应用",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "cn.workbuddy.libretv",
+    "productName": "LibreTV",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "icon.ico"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/server",
+        "to": "server",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "7z",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico",
+      "artifactName": "LibreTV-桌面版-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "LibreTV 影视工作台",
+      "installerLanguages": [
+        "zh_CN"
+      ],
+      "language": "2052",
+      "artifactName": "LibreTV-安装程序-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "LibreTV-便携版.exe"
+    }
+  },
+  "dependencies": {
+    "png-to-ico": "^3.0.2"
+  }
+}
